@@ -1,24 +1,4 @@
-﻿select * from table1
-
-Select count_big(*)
-FROM wwi.fact_sale
-
-
-
-Select SUM(f.Profit),d.Month,d.[Calendar Year],c.City
-From wwi.fact_sale f JOIN wwi.dimension_date d on f.[Invoice Date Key]=d.[Date]
-JOIN wwi.dimension_City c on f.[City Key]=c.[City Key]
-GROUP By d.Month,[Calendar Year],c.City
-
-GO
-
-Select SUM(f.Profit),d.Month,d.[Calendar Year]
-From wwi.fact_sale f JOIN wwi.dimension_date d on f.[Invoice Date Key]=d.[Date]
-GROUP By d.Month,[Calendar Year]
-
-
-
-SELECT dc.[Country], dc.[City], dd.[Calendar Year Label], dst.[Stock Item], COUNT_BIG(f.[Sale Key]) AS 'Count of Sales', SUM(f.[Total Excluding Tax]) AS 'Revenue', SUM(f.[Profit]) AS 'Profit', count_big(*) AS cb FROM wwi.fact_sale AS f INNER JOIN
+﻿SELECT dc.[Country], dc.[City], dd.[Calendar Year Label], dst.[Stock Item], COUNT_BIG(f.[Sale Key]) AS 'Count of Sales', SUM(f.[Total Excluding Tax]) AS 'Revenue', SUM(f.[Profit]) AS 'Profit', count_big(*) AS cb FROM wwi.fact_sale AS f INNER JOIN
 wwi.dimension_City AS dc
 ON f.[City Key] = dc.[City Key] INNER JOIN
 wwi.dimension_Date AS dd
@@ -26,12 +6,3 @@ ON f.[Invoice Date Key] = dd.[Date] INNER JOIN
 wwi.dimension_StockItem AS dst
 ON f.[Stock Item Key] = dst.[Stock Item Key] GROUP BY dc.[City], dc.[Country], dd.[Calendar Year Label], dst.[Stock Item];
 
-GO
-
-SELECT COUNT_BIG(*)
-FROM dbo.noaa_weather
-
-
-
-SELECT Count(*), Year([datetime]) FROM dbo.noaa_weather
-GROUP BY Year([datetime])
