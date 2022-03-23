@@ -10,7 +10,7 @@ string sqlFile = "sqlScripts.txt";
 // get textReader object
 string strTSQL=File.ReadAllText(sqlFile);
 
-JoinsVisitor joinsVisitor = new JoinsVisitor();
+SynapseVisitor joinsVisitor = new SynapseVisitor();
 var output = joinsVisitor.ProcessVisitor(strTSQL);
 Console.WriteLine(output);
 
@@ -23,16 +23,59 @@ Console.ReadKey(true);
 
 
 
-public class JoinsVisitor : TSqlConcreteFragmentVisitor
+public class SynapseVisitor : TSqlConcreteFragmentVisitor
 {
-    private List<String> _tables = new List<String>();
-    private List<String> _joinColumns = new List<String>();
+
     private Dictionary<String, String> _tableAliases = new Dictionary<String, String>();
-   
-    private class joinModel
+
+    private SynapseQueryModel _synapsequerymodel;
+
+    public SynapseVisitor()
     {
+        _synapsequerymodel = new SynapseQueryModel();
+
+    }
+
+    private class SynapseQueryModel
+    {
+        public SynapseQueryModel()
+        {
+            JoinedTables = new List<String>();
+            JoinedColumns = new List<String>();
+            CopyStatementFrom = new List<String>();
+            CopyStatementInto = new List<String>();
+            IsCopyStatement = false;
+            IsSelectStatement = false;
+            IsInsertStatement = false;
+            IsBulkInsertStatement = false;
+            IsUpdateStatement = false;
+            IsDeleteStatement = false;
+            InsertStatmentTargets = new List<string>();
+            DeleteStatementTargets = new List<string>();
+        }
         public List<string> JoinedTables { get; set; }
         public List<string> JoinedColumns { get; set; }
+
+        public bool IsSelectStatement { get; set; }
+
+        public bool IsInsertStatement { get; set; }
+
+        public bool IsBulkInsertStatement { get; set; }
+
+        public bool IsUpdateStatement { get; set; }
+
+        public bool IsDeleteStatement { get; set; }
+
+        public bool IsCopyStatement { get; set; }
+
+        public List<string> CopyStatementFrom { get; set; }
+
+        public List<string> CopyStatementInto  { get; set; }
+
+        public List<string> InsertStatmentTargets { get; set; }
+
+        public List<string> DeleteStatementTargets { get; set; }
+
     }
 
     public string ProcessVisitor(string strSQL)
@@ -52,16 +95,12 @@ public class JoinsVisitor : TSqlConcreteFragmentVisitor
             sqlFragments.Accept(this);
         }
 
-        joinModel outObject = new joinModel();
-        outObject.JoinedTables = _tables;
-        outObject.JoinedColumns = _joinColumns;
-
-        var outstring = JsonSerializer.Serialize<joinModel>(outObject);
+        var outstring = JsonSerializer.Serialize<SynapseQueryModel>(_synapsequerymodel);
 
         return outstring;
     }
 
-   public override void ExplicitVisit(QualifiedJoin node)
+    public override void ExplicitVisit(QualifiedJoin node)
     {
 
         var first = node.FirstTableReference;
@@ -76,7 +115,7 @@ public class JoinsVisitor : TSqlConcreteFragmentVisitor
             
           if(localSecond.GetType() == typeof(NamedTableReference))
             {
-                _GetTableName((NamedTableReference)localSecond);
+                _synapsequerymodel.JoinedTables.Add(_GetTableName((NamedTableReference)localSecond));
             }
 
             if (localSearchCondition.GetType() == typeof(BooleanComparisonExpression))
@@ -89,13 +128,13 @@ public class JoinsVisitor : TSqlConcreteFragmentVisitor
 
         if (first.GetType() == typeof(NamedTableReference))
         {
-            _GetTableName((NamedTableReference)first);
+            _synapsequerymodel.JoinedTables.Add(_GetTableName((NamedTableReference)first));
         }
 
 
         if (second.GetType() == typeof(NamedTableReference))
         {
-            _GetTableName((NamedTableReference)second);
+            _synapsequerymodel.JoinedTables.Add(_GetTableName((NamedTableReference)second));
         }
 
         if (searchCondition.GetType() == typeof(BooleanComparisonExpression))
@@ -104,33 +143,100 @@ public class JoinsVisitor : TSqlConcreteFragmentVisitor
         }
 
         // after finishing all tables and columsn, map aliases
-        _mapTableAliases(ref _joinColumns);
-
-
-        //Console.WriteLine("----Tables-----");
-        //foreach (string t in _tables)
-        //{
-        //    Console.WriteLine(t);
-        //}
-
-        //Console.WriteLine("----Columns-----");
-        //foreach (String c in _joinColumns)
-        //{
-        //    Console.WriteLine(c);
-        //}
+        _mapTableAliases(ref _synapsequerymodel);
 
     }
 
-    private void _GetTableName(NamedTableReference table)
+    public override void ExplicitVisit(CopyStatement node)
+    {
+        _synapsequerymodel.IsCopyStatement = true;
+
+        IList<StringLiteral> copyFrom = node.From;
+        if(copyFrom != null)
+        { 
+            foreach (StringLiteral s in copyFrom)
+            {
+                _synapsequerymodel.CopyStatementFrom.Add(s.Value);
+            }
+        }
+
+        var tableName = _GetTableName(node.Into);
+        if (tableName != null)
+        {
+            _synapsequerymodel.CopyStatementInto.Add(tableName);
+        }
+
+        base.ExplicitVisit(node);
+    }
+
+    public override void ExplicitVisit(SelectStatement node)
+    {
+        _synapsequerymodel.IsSelectStatement = true;
+        base.ExplicitVisit(node);
+    }
+
+    public override void ExplicitVisit(InsertStatement node)
+    {
+        _synapsequerymodel.IsInsertStatement = true;
+        InsertSpecification insertSpecs = node.InsertSpecification as InsertSpecification;
+        if (insertSpecs != null)
+        {
+            if (insertSpecs.Target is NamedTableReference targetTable)
+            {
+                var tableName = _GetTableName(targetTable);
+                _synapsequerymodel.InsertStatmentTargets.Add(tableName);
+            }
+
+        }
+        base.ExplicitVisit(node);
+    }
+
+    public override void ExplicitVisit(InsertBulkStatement node)
+    {
+        _synapsequerymodel.IsBulkInsertStatement = true;
+        base.ExplicitVisit(node);
+    }
+
+    public override void ExplicitVisit(DeleteStatement node)
+    {
+        _synapsequerymodel.IsDeleteStatement = true;
+        DeleteSpecification deleteSpecs=node.DeleteSpecification as DeleteSpecification;
+        if(deleteSpecs != null)
+        {
+            if (deleteSpecs.Target is NamedTableReference targetTable)
+            {
+                var tableName = _GetTableName(targetTable);
+                _synapsequerymodel.DeleteStatementTargets.Add(tableName);
+            }
+        }
+        base.ExplicitVisit(node);
+    }
+
+    private string _GetTableName(NamedTableReference table)
     {
         var schemaName = table.SchemaObject.SchemaIdentifier != null ? table.SchemaObject.SchemaIdentifier.Value : "dbo";
         var tableName = table.SchemaObject.BaseIdentifier.Value;
-        if(tableName != null)
+        if (tableName != null)
         {
-            _tables.Add(schemaName + "." + tableName);
             // add the table alias to search for it when adding the columns
-           _tableAliases[table.Alias.Value]=schemaName + "." + tableName;
+            if(table.Alias != null)
+                _tableAliases[table.Alias.Value] = schemaName + "." + tableName;
+            return (schemaName + "." + tableName);
         }
+        else
+            return null;
+    }
+
+    private string _GetTableName(SchemaObjectName schemaObject)
+    {
+        var schemaName = schemaObject.SchemaIdentifier != null ? schemaObject.SchemaIdentifier.Value : "dbo";
+        var tableName = schemaObject.BaseIdentifier.Value;
+        if (tableName != null)
+        {
+            return (schemaName + "." + tableName);
+        }
+        else
+            return null;
     }
 
     private void _GetJoinColumns(BooleanComparisonExpression searchCondition)
@@ -143,25 +249,26 @@ public class JoinsVisitor : TSqlConcreteFragmentVisitor
             {
                 var tableAlias=firstCol.MultiPartIdentifier.Identifiers[0].Value;
                 var colName = firstCol.MultiPartIdentifier.Identifiers[1].Value;
-                _joinColumns.Add(tableAlias + "." + colName);
+                _synapsequerymodel.JoinedColumns.Add(tableAlias + "." + colName);
             }
             else
-                _joinColumns.Add(firstCol.MultiPartIdentifier.Identifiers[0].Value);
+                _synapsequerymodel.JoinedColumns.Add(firstCol.MultiPartIdentifier.Identifiers[0].Value);
 
             if(secondCol.MultiPartIdentifier.Count >1 )
             {
                 var tableAlias = secondCol.MultiPartIdentifier.Identifiers[0].Value;
                 var colName= secondCol.MultiPartIdentifier.Identifiers[1].Value;
-                _joinColumns.Add(tableAlias + "." + colName);
+                _synapsequerymodel.JoinedColumns.Add(tableAlias + "." + colName);
             }
             else
-                _joinColumns.Add(secondCol.MultiPartIdentifier.Identifiers[0].Value);
+                _synapsequerymodel.JoinedColumns.Add(secondCol.MultiPartIdentifier.Identifiers[0].Value);
 
         }
     }
 
-    private void _mapTableAliases(ref List<String> columns)
+    private void _mapTableAliases(ref SynapseQueryModel model)
     {
+        List<string> columns = model.JoinedColumns;
         for (int i=0;i<columns.Count;i++)
         {
             // if column has .
