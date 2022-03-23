@@ -50,7 +50,7 @@ public class SynapseVisitor : TSqlConcreteFragmentVisitor
             IsBulkInsertStatement = false;
             IsUpdateStatement = false;
             IsDeleteStatement = false;
-            InsertStatmentTargets = new List<string>();
+            InsertStatementTargets = new List<string>();
             DeleteStatementTargets = new List<string>();
         }
         public List<string> JoinedTables { get; set; }
@@ -72,7 +72,7 @@ public class SynapseVisitor : TSqlConcreteFragmentVisitor
 
         public List<string> CopyStatementInto  { get; set; }
 
-        public List<string> InsertStatmentTargets { get; set; }
+        public List<string> InsertStatementTargets { get; set; }
 
         public List<string> DeleteStatementTargets { get; set; }
 
@@ -184,7 +184,7 @@ public class SynapseVisitor : TSqlConcreteFragmentVisitor
             if (insertSpecs.Target is NamedTableReference targetTable)
             {
                 var tableName = _GetTableName(targetTable);
-                _synapsequerymodel.InsertStatmentTargets.Add(tableName);
+                _synapsequerymodel.InsertStatementTargets.Add(tableName);
             }
 
         }
