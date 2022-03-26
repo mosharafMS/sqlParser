@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\QueryParserKernel\QueryParserKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="sqlScripts.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

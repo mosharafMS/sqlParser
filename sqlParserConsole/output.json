@@ -1,9 +1,14 @@
 {
-  "JoinedTables": [ "wwi.dimension_Date", "wwi.dimension_City", 
-                    "wwi.fact_sale", "wwi.dimension_StockItem" ],
-  "JoinedColumns": [ "wwi.fact_sale.Invoice Date Key", "wwi.dimension_Date.Date",
-    "wwi.fact_sale.City Key",
-    "wwi.dimension_City.City Key",
-    "wwi.fact_sale.Stock Item Key", 
-    "wwi.dimension_StockItem.Stock Item Key" ]
+  "JoinedTables": [],
+  "JoinedColumns": [],
+  "IsSelectStatement": false,
+  "IsInsertStatement": false,
+  "IsBulkInsertStatement": false,
+  "IsUpdateStatement": false,
+  "IsDeleteStatement": false,
+  "IsCopyStatement": true,
+  "CopyStatementFrom": [ "https://myaccount.blob.core.windows.net/myblobcontainer/folder1/" ],
+  "CopyStatementInto": [ "dbo.test_1" ],
+  "InsertStatementTargets": [],
+  "DeleteStatementTargets": []
 }
