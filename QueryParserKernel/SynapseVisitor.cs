@@ -31,21 +31,31 @@ namespace QueryParserKernel
             IList<ParseError> errors = new List<ParseError>();
             TSql160Parser parser = new TSql160Parser(false, SqlEngineType.SqlAzure);
 
-            _synapsequerymodel.SQLCommand = strSQL;
 
-            _synapsequerymodel.Hash = HashString(strSQL);
-
+            TSqlScript sqlFragments = null;
             using (TextReader reader = new StringReader(strSQL))
             {
-                TSqlScript sqlFragments = (TSqlScript)parser.Parse(reader, out errors);
+                sqlFragments = (TSqlScript)parser.Parse(reader, out errors);
                 foreach (ParseError error in errors)
                 {
                     _synapsequerymodel.Errors.Add(String.Format("Error in line {0}, column {1}, message: {2}", error.Line.ToString(), error.Column.ToString(), error.Message.ToString()));
                 }
-
                 // walk the tree now
                 sqlFragments.Accept(this);
             }
+
+            //remove the comments before returning back to sqlcommand
+            strSQL = String.Join(
+                String.Empty,
+                sqlFragments.ScriptTokenStream
+                .Where(x => x.TokenType != TSqlTokenType.MultilineComment)
+                .Where(x => x.TokenType != TSqlTokenType.SingleLineComment)
+                .Select(x => x.Text));
+
+
+            _synapsequerymodel.SQLCommand = strSQL;
+
+            _synapsequerymodel.Hash = HashString(strSQL);
 
             return _synapsequerymodel;
         }

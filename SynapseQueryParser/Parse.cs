@@ -37,42 +37,63 @@ namespace SynapseQueryParser
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [Table("SynapseQueries",Connection = "AzureWebJobsStorage")] IAsyncCollector<TableStorageItem> tableCollector)
         {
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
-
+            _logger.LogInformation("HTTP trigger function processed a request.");
+            SynapseQueryModel model = null;
             string responseMessage = null;
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            string? sqlCommand = data?.command;
-
-            if(string.IsNullOrEmpty(sqlCommand))
+            try
             {
-                responseMessage = "This HTTP triggered function executed successfully. Pass a command in the request body for a response.";
-                return new OkObjectResult(responseMessage);
+                responseMessage = null;
+
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                dynamic data = JsonConvert.DeserializeObject(requestBody);
+  
+                string? sqlCommand = data?.command;
+
+                if (string.IsNullOrEmpty(sqlCommand))
+                {
+                    responseMessage = "This HTTP triggered function executed successfully. Pass a command in the request body for a response.";
+                    
+                    return new BadRequestObjectResult(responseMessage);
+                }
+
+                _logger.LogInformation("SQLCommand is not null or empty...proceed to parsing");
+                //process
+                SynapseVisitor joinsVisitor = new SynapseVisitor();
+                model = joinsVisitor.ProcessVisitor(sqlCommand);
+                _logger.LogInformation("Parse done...serialize");
+                //serialize the model 
+                responseMessage = JsonConvert.SerializeObject(model);
+
+                _logger.LogInformation("Save the query in table storage for future reference and enhancements");
+                //save the query
+                TableStorageItem tableStorageItem = new TableStorageItem();
+                tableStorageItem.PartitionKey = model.Hash;
+                tableStorageItem.RowKey = Guid.NewGuid().ToString();
+                tableStorageItem.Text = responseMessage;
+
+                await tableCollector.AddAsync(tableStorageItem);
+
+
+                if (model.Errors.Count > 0)
+                {
+                    _logger.LogError("Errors array is not empty. throwing exception");
+                    _logger.LogError($"SqlCommand hash: {model.Hash}");
+                    return new BadRequestObjectResult(responseMessage);
+                }
+                else
+                    return new OkObjectResult(responseMessage);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                _logger.LogError($"SqlCommand hash: {model!.Hash}");
+                model!.Errors.Add(e.Message);
+                responseMessage = JsonConvert.SerializeObject(model);
+                return new BadRequestObjectResult(responseMessage);
             }
             
-            //process
-            SynapseVisitor joinsVisitor = new SynapseVisitor();
-            SynapseQueryModel model = joinsVisitor.ProcessVisitor(sqlCommand);
-            //serialize the model 
-            responseMessage = JsonConvert.SerializeObject(model);
-
-            //save the query
-            TableStorageItem tableStorageItem = new TableStorageItem();
-            tableStorageItem.PartitionKey = model.Hash;
-            tableStorageItem.RowKey = Guid.NewGuid().ToString();
-            tableStorageItem.Text = responseMessage;
-
-            await tableCollector.AddAsync(tableStorageItem);
-
-            if(model.Errors.Count>0)
-                return new BadRequestObjectResult(responseMessage);
-            else
-                return new OkObjectResult(responseMessage);
         }
-
-
-
     }
 
     public class RequestBodyModel
