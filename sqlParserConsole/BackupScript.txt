@@ -28,6 +28,20 @@ ON f.[Stock Item Key] = dst.[Stock Item Key] GROUP BY dc.[City], dc.[Country], d
 
 GO
 
+/*
+This is a comment 
+*/
+SELECT dc.[Country], dc.[City], dd.[Calendar Year Label], dst.[Stock Item], COUNT_BIG(f.[Sale Key]) AS 'Count of Sales', SUM(f.[Total Excluding Tax]) AS 'Revenue', SUM(f.[Profit]) AS 'Profit', count_big(*) AS cb FROM wwi.fact_sale AS f INNER JOIN
+wwi.dimension_City AS dc
+ON f.[City Key] = dc.[City Key] INNER JOIN
+wwi.dimension_Date AS dd --that's another comment
+ON f.[Invoice Date Key] = dd.[Date] INNER JOIN
+--third comment
+wwi.dimension_StockItem AS dst
+ON f.[Stock Item Key] = dst.[Stock Item Key] GROUP BY dc.[City], dc.[Country], dd.[Calendar Year Label], dst.[Stock Item];
+
+GO
+
 SELECT COUNT_BIG(*)
 FROM dbo.noaa_weather
 
