@@ -10,7 +10,7 @@ namespace QueryParserKernel
     {
         public SynapseQueryModel()
         {
-            Command = string.Empty;
+            SQLCommand = string.Empty;
             JoinedTables = new List<String>();
             JoinedColumns = new List<String>();
             CopyStatementFrom = new List<String>();
@@ -26,7 +26,7 @@ namespace QueryParserKernel
             Errors = new List<string>();
             Hash = String.Empty;
         }
-        public string Command { get; set; }
+        public string SQLCommand { get; set; }
         public List<string> JoinedTables { get; set; }
         public List<string> JoinedColumns { get; set; }
         public bool IsSelectStatement { get; set; }

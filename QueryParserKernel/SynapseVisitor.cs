@@ -31,7 +31,7 @@ namespace QueryParserKernel
             IList<ParseError> errors = new List<ParseError>();
             TSql160Parser parser = new TSql160Parser(false, SqlEngineType.SqlAzure);
 
-            _synapsequerymodel.Command = strSQL;
+            _synapsequerymodel.SQLCommand = strSQL;
 
             _synapsequerymodel.Hash = HashString(strSQL);
 
