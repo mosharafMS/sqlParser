@@ -31,7 +31,7 @@ namespace SynapseQueryParser
 
         [FunctionName("Parse")]
         [OpenApiOperation(operationId: "Run")]
-        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header)]
         [OpenApiRequestBody("application/json", typeof(RequestBodyModel),Required=true, Description ="Request Body should have only one input, command which includes the SQL Statement to parse")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK,contentType: "application/json", bodyType: typeof(string), Description = "The OK response")]
         public async Task<IActionResult> Run(
@@ -90,7 +90,7 @@ namespace SynapseQueryParser
                 _logger.LogError($"SqlCommand hash: {model?.Hash}");
                 model!.Errors.Add(e.Message);
                 responseMessage = JsonConvert.SerializeObject(model);
-                return new BadRequestObjectResult(responseMessage);
+                return new ExceptionResult(e, false);
             }
             
         }
