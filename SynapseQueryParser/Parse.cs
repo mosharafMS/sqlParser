@@ -32,8 +32,8 @@ namespace SynapseQueryParser
         [FunctionName("Parse")]
         [OpenApiOperation(operationId: "Run")]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header)]
-        [OpenApiRequestBody("application/json", typeof(RequestBodyModel),Required=true, Description ="Request Body should have only one input, command which includes the SQL Statement to parse")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK,contentType: "application/json", bodyType: typeof(string), Description = "The OK response")]
+        [OpenApiRequestBody(bodyType: typeof(string), contentType: "text/plain", Required=true, Description ="Request Body should the SQL Statement to parse in text format")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK,contentType: "application/json", bodyType: typeof(SynapseQueryModel), Description = "The OK response")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [Table("SynapseQueries",Connection = "AzureWebJobsStorage")] IAsyncCollector<TableStorageItem> tableCollector)
         {
@@ -45,10 +45,7 @@ namespace SynapseQueryParser
             {
                 responseMessage = null;
 
-                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                dynamic data = JsonConvert.DeserializeObject(requestBody);
-  
-                string? sqlCommand = data?.command;
+                string sqlCommand = await new StreamReader(req.Body).ReadToEndAsync();
 
                 if (string.IsNullOrEmpty(sqlCommand))
                 {
