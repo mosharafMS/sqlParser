@@ -38,7 +38,7 @@ namespace SynapseQueryParser
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [Table("SynapseQueries",Connection = "AzureWebJobsStorage")] IAsyncCollector<TableStorageItem> tableCollector)
         {
             _logger.LogInformation("HTTP trigger function processed a request.");
-            SynapseQueryModel model = null;
+            SynapseQueryModel model = new SynapseQueryModel();
             string responseMessage = null;
 
             try
@@ -87,7 +87,7 @@ namespace SynapseQueryParser
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                _logger.LogError($"SqlCommand hash: {model!.Hash}");
+                _logger.LogError($"SqlCommand hash: {model?.Hash}");
                 model!.Errors.Add(e.Message);
                 responseMessage = JsonConvert.SerializeObject(model);
                 return new BadRequestObjectResult(responseMessage);
