@@ -83,7 +83,7 @@ namespace SynapseQueryParser
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e, "Exception occured");
                 _logger.LogError($"SqlCommand hash: {model?.Hash}");
                 model!.Errors.Add(e.Message);
                 responseMessage = JsonConvert.SerializeObject(model);
