@@ -8,7 +8,7 @@ param (
     $SQLCommand
 )
 
-$body=@{"command"=$SQLCommand} | ConvertTo-Json 
+$body=$SQLCommand
 
 # add the $AuthKey as header value for x-functions-key header
 $headers = @{
