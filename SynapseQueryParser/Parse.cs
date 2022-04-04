@@ -79,7 +79,7 @@ namespace SynapseQueryParser
                     return new BadRequestObjectResult(responseMessage);
                 }
                 else
-                    return new OkObjectResult(responseMessage);
+                    return new OkObjectResult(model);
             }
             catch (Exception e)
             {
