@@ -15,6 +15,7 @@ namespace QueryParserKernel
             JoinedColumns = new List<String>();
             CopyStatementFrom = new List<String>();
             CopyStatementInto = new List<String>();
+            SelectStatementFrom = new List<String>();
             IsCopyStatement = false;
             IsSelectStatement = false;
             IsInsertStatement = false;
@@ -37,6 +38,7 @@ namespace QueryParserKernel
         public bool IsCopyStatement { get; set; }
         public List<string> CopyStatementFrom { get; set; }
         public List<string> CopyStatementInto { get; set; }
+        public List<string> SelectStatementFrom { get;  set; }
         public List<string> InsertStatementTargets { get; set; }
         public List<string> DeleteStatementTargets { get; set; }
         public List<string> Errors { get; set; }

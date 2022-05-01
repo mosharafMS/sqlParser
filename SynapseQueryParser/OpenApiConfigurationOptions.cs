@@ -15,7 +15,7 @@ namespace SynapseQueryParser
     {
         public OpenApiInfo Info { get; set; } = new OpenApiInfo()
         {
-            Version = "1.0.0",
+            Version = "1.1.0",
             Title = "Synapse SQL Query Analytics",
             Description = "HTTP APIs that parse and analyze Synapse SQL",
             Contact = new OpenApiContact()

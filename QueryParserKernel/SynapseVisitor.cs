@@ -142,6 +142,21 @@ namespace QueryParserKernel
         public override void ExplicitVisit(SelectStatement node)
         {
             _synapsequerymodel.IsSelectStatement = true;
+            var querySpecs = node.QueryExpression as QuerySpecification;
+            var fromClause = querySpecs?.FromClause as FromClause;
+            var tables = fromClause?.TableReferences;
+            if (tables != null && tables.GetType() == typeof(NamedTableReference))
+            {
+                foreach (var table in tables)
+                {
+                    var tableName = _GetTableName((NamedTableReference)table);
+                    if (tableName != null)
+                    {
+                        _synapsequerymodel.SelectStatementFrom.Add(tableName);
+                    }
+                }
+            }
+            
             base.ExplicitVisit(node);
         }
 
