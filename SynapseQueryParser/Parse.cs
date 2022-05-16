@@ -76,7 +76,7 @@ namespace SynapseQueryParser
                 {
                     _logger.LogError("Errors array is not empty. throwing exception");
                     _logger.LogError($"SqlCommand hash: {model.Hash}");
-                    return new BadRequestObjectResult(responseMessage);
+                    return new BadRequestObjectResult(model);
                 }
                 else
                     return new OkObjectResult(model);
