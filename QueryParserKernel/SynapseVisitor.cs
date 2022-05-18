@@ -145,7 +145,7 @@ namespace QueryParserKernel
             var querySpecs = node.QueryExpression as QuerySpecification;
             var fromClause = querySpecs?.FromClause as FromClause;
             var tables = fromClause?.TableReferences;
-            if (tables != null && tables.GetType() == typeof(NamedTableReference))
+            if (tables != null && tables.Count > 0 && tables[0].GetType() == typeof(NamedTableReference))
             {
                 foreach (var table in tables)
                 {
