@@ -66,7 +66,10 @@ namespace QueryParserKernel
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(strSQL));
-                return Convert.ToHexString(hashedBytes);
+                StringBuilder hex = new StringBuilder(hashedBytes.Length * 2);
+                foreach (byte b in hashedBytes)
+                    hex.AppendFormat("{0:x2}", b);
+                return hex.ToString();
             }
         }
 

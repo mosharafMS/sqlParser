@@ -56,8 +56,8 @@ namespace SynapseQueryParser
 
                 _logger.LogInformation("SQLCommand is not null or empty...proceed to parsing");
                 //process
-                SynapseVisitor joinsVisitor = new SynapseVisitor();
-                model = joinsVisitor.ProcessVisitor(sqlCommand);
+                SynapseVisitor synapseVisitor = new SynapseVisitor();
+                model = synapseVisitor.ProcessVisitor(sqlCommand);
                 _logger.LogInformation("Parse done...serialize");
                 //serialize the model 
                 responseMessage = JsonConvert.SerializeObject(model);
