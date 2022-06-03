@@ -9,7 +9,7 @@
 	<Description> SQL Parser for Synapse SQL. Github repo https://github.com/mosharafMS/sqlParser </Description>
 	<PackageName>SynapseQueryParserKernel</PackageName>
 	<PackageId>$(PackageName)</PackageId>
-	<PackageLicenseFile>D:\MyWork\source\SynapseQueryAnalytics\license</PackageLicenseFile>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
