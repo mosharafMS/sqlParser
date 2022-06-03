@@ -1,8 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-       <Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
     <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Mohamed Sharaf</Authors>
+	<VersionPrefix>1.1.0</VersionPrefix>
+	<Description> SQL Parser for Synapse SQL. Github repo https://github.com/mosharafMS/sqlParser </Description>
+	<PackageName>SynapseQueryParserKernel</PackageName>
+	<PackageId>$(PackageName)</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
