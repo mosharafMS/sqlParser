@@ -1,13 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>disabled</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Mohamed Sharaf</Authors>
+	<VersionPrefix>1.1.0</VersionPrefix>
+	<Description> SQL Parser for Synapse SQL. Github repo https://github.com/mosharafMS/sqlParser </Description>
+	<PackageName>SynapseQueryParserKernel</PackageName>
+	<PackageId>$(PackageName)</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SqlServer.DacFx" Version="160.5400.1" />
+    <PackageReference Include="Microsoft.SqlServer.DacFx" Version="160.6161.0" />
   </ItemGroup>
 
 </Project>

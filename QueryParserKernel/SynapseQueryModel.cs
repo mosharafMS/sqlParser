@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace QueryParserKernel
 {
+
+    [Serializable]
     public class SynapseQueryModel
     {
         public SynapseQueryModel()

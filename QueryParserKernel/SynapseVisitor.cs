@@ -10,8 +10,8 @@ using System.Security.Cryptography;
 
 namespace QueryParserKernel
 {
-    
 
+    [Serializable]
     public class SynapseVisitor : TSqlConcreteFragmentVisitor
     {
 
