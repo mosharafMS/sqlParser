@@ -2,6 +2,7 @@
 
 [![Build and deploy dotnet core app to Azure Function App - synapseQueryParserfunc](https://github.com/mosharafMS/sqlParser/actions/workflows/master_synapsequeryparserfunc.yml/badge.svg)](https://github.com/mosharafMS/sqlParser/actions/workflows/master_synapsequeryparserfunc.yml)
 
+[![Deploy to nuget](https://github.com/mosharafMS/sqlParser/actions/workflows/publish_nuget.yml/badge.svg)](https://github.com/mosharafMS/sqlParser/actions/workflows/publish_nuget.yml)
 
 ## Why:
 
