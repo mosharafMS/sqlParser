@@ -20,19 +20,16 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5
 
     - name: Restore dependencies
-      if: startsWith(github.ref, 'refs/heads/release')  
       run: nuget restore $PROJECT
-
+      
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
 
     - name: Build
-      if: startsWith(github.ref, 'refs/heads/release')  
       run: dotnet build $PROJECT --configuration $BUILD_CONFIG --no-restore
 
     - name: Publish
-      if: startsWith(github.ref, 'refs/heads/release')
       run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
       
