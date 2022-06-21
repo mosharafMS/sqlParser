@@ -30,7 +30,7 @@ namespace SynapseQueryParser
         }
 
         [FunctionName("Parse")]
-        [OpenApiOperation(operationId: "Run")]
+        [OpenApiOperation(operationId: "Parse")]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header)]
         [OpenApiRequestBody(bodyType: typeof(string), contentType: "text/plain", Required=true, Description ="Request Body should the SQL Statement to parse in text format")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK,contentType: "application/json", bodyType: typeof(SynapseQueryModel), Description = "The OK response")]
