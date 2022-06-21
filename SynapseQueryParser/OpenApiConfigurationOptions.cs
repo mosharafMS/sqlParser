@@ -39,6 +39,17 @@ namespace SynapseQueryParser
         public bool IncludeRequestingHostName { get => includerequestinghostname; set => includerequestinghostname=value; }
         public bool ForceHttp { get => forcehttp; set => forcehttp=value; }
         public bool ForceHttps { get => forcehttps ; set => forcehttps=value; }
-        public List<IDocumentFilter> DocumentFilters { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public List<IDocumentFilter> DocumentFilters
+        {
+            get
+            {
+                return new List<IDocumentFilter>();
+            }
+            set
+            {
+            }
+        } 
+       
     }
 }
