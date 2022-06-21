@@ -33,6 +33,7 @@ namespace SynapseQueryParser
         private bool forcehttp=false;
         private bool forcehttps = false;
         private bool includerequestinghostname = false;
+        private List<IDocumentFilter> documentFilters = new List<IDocumentFilter>();
         public List<OpenApiServer> Servers { get; set; } = new List<OpenApiServer>();
 
         public OpenApiVersionType OpenApiVersion { get; set; } = OpenApiVersionType.V2;
@@ -44,7 +45,7 @@ namespace SynapseQueryParser
         {
             get
             {
-                return new List<IDocumentFilter>();
+                return documentFilters;
             }
             set
             {
