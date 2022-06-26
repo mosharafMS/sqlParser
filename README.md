@@ -42,7 +42,7 @@ To use the library, you can
 3) To process the queries, two options implemented
     - If possible to deploy the REST API and call it then it can be used by spark or other tools. However not many organizations would be open to deploy another REST API. 
     - Reference the [nuget package](https://www.nuget.org/packages/SynapseQueryParserKernel) in a .Net Spark notebook and call the library directly by using Spark UDF
-  Both implementations are added in the /Notebooks folder
+  Both implementations are added in the [/Notebooks](/Notebooks/) folder
 
 ## Project:
 
