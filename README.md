@@ -20,7 +20,7 @@ You want to get insights about Synapse SQL tables' usage including
 
 ## How:
 
-Depending on the `Microsoft.SqlServer.TransactSql.ScriptDom` namespace in the `Microsoft.SqlServer.DacFX` package from SQL Server team to do the core parsing. 
+The core of the solution is a Synapse SQL Parser library. It's built depending on the `Microsoft.SqlServer.TransactSql.ScriptDom` namespace in the `Microsoft.SqlServer.DacFX` package from SQL Server team to do the core parsing. 
 
 The core library is implemented as a class library project compiled against .NET Standard 2.1 and published to Nuget at https://www.nuget.org/packages/SynapseQueryParserKernel
 
