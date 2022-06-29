@@ -1,4 +1,4 @@
-# Synapse SQL Parser
+# Synapse Query Analytics
 
 [![Build and deploy dotnet core app to Azure Function App - synapseQueryParserfunc](https://github.com/mosharafMS/sqlParser/actions/workflows/master_synapsequeryparserfunc.yml/badge.svg)](https://github.com/mosharafMS/sqlParser/actions/workflows/master_synapsequeryparserfunc.yml)
 
@@ -6,7 +6,7 @@
 
 ## Why:
 
-You want to get insights about tables usage including
+You want to get insights about Synapse SQL tables' usage including
 
 - DML operations (Update, Delete, Insert) on the Synapse SQL Pools tables
 - Select operations on the table
