@@ -16,13 +16,14 @@ You want to get insights about Synapse SQL tables' usage including
 
 
 
-
+## Demo video
+[Synapse Query Analytics](https://youtu.be/JS6apfe5Lbs)
 
 ## How:
 
 The core of the solution is a Synapse SQL Parser library. It's built depending on the `Microsoft.SqlServer.TransactSql.ScriptDom` namespace in the `Microsoft.SqlServer.DacFX` package from SQL Server team to do the core parsing. 
 
-The core library is implemented as a class library project compiled against .NET Standard 2.1 and published to Nuget at https://www.nuget.org/packages/SynapseQueryParserKernel
+The core library is implemented as a class library project compiled against .NET Standard 2.1 and published to Nuget at [SynapseQueryParserKernel](https://www.nuget.org/packages/SynapseQueryParserKernel)
 
 The library is wrapped in two interfaces 
  - Console app
