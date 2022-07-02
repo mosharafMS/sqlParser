@@ -45,6 +45,36 @@ To use the library, you can
     - Reference the [nuget package](https://www.nuget.org/packages/SynapseQueryParserKernel) in a .Net Spark notebook and call the library directly by using Spark UDF
   Both implementations are added in the [/Notebooks](/Notebooks/) folder
 
+## Permissions on the SQL Pools
+The pipeline that reads the query store queries from the SQL Pool uses this query
+
+```sql
+SELECT txt.query_sql_text,txt.statement_sql_handle,qry.query_id,qry.object_id,qry.is_internal_query,qry.last_execution_time,SUM(count_executions) AS count_executions
+FROM sys.query_store_query_text txt
+INNER JOIN sys.query_store_query qry
+    ON Qry.query_text_id = txt.query_text_id
+JOIN sys.query_store_plan pln
+    ON qry.query_id=pln.query_id
+JOIN sys.query_store_runtime_stats runstate
+ON pln.plan_id=runstate.plan_id
+GROUP BY txt.query_sql_text,txt.statement_sql_handle,qry.query_id,qry.object_id,qry.is_internal_query,qry.last_execution_time; 
+```
+
+The permission needed to run this query is only ***VIEW DATABASE STATE*** on the SQL Pool user database. 
+
+This sample code shows how to grant it
+
+```sql
+-- In master
+CREATE LOGIN sqlQueryStoreReader WITH PASSWORD='<YourStr0ngP@s$w0rd>'
+
+
+-- In the user database
+CREATE USER sqlQueryStoreReader FROM LOGIN sqlQueryStoreReader
+
+GRANT VIEW DATABASE STATE TO sqlQueryStoreReader;
+```
+
 ## Project:
 
 - QueryParserKernel: The class library that has the core functionality
